@@ -22,10 +22,10 @@
 
 # Backend: CodeIgniter
 
--Must run Apache or Nginx server (In my case, I am using Apache).
 PHP version 8.2.4 used.
 
--Clone the repo into XAMPP/htdocs inorder to run in the server. 
+# Run Server
+- php -S localhost:8000 index.php
 
 # Note:
  Since I am using PHP Version 8.2 and codeIgniter 3 was developed before that, I had so system/core and system/database file changes to avoid error such as
@@ -37,16 +37,32 @@ Well this solved my error issue.
 
 # DataBase Creation
 
-Database name is set as grimoire. 
+For Database, I am using XAMMP, MYSQL. So make sure your XAMPP or MYSQL database is running.
 
-CREATE TABLE BOOK (
-    id INT AUTO_INCREMENT PRIMARYKEY,
-    title VARCHAR(255) NOT NULL,
-    author VARCHAR(255) NOT NULL,
-    genre VARCHAR(255) NOT NULL,
-    published_year YEAR NOT NULL,
-    description TEXT
-);
+Run migrations using php index.php migrate
+
+# Note
+Configure your database.php file accordignly. 
+
+In my case, Database name is set as grimoire. 
+
+Run Migration
+php index.php migrate
+
+if u want to run specific migration version 
+
+php index.php migrate version(your_migration_file_timestamp)
+
+or latest version
+
+php index.php migrate/latest
+
+
+
+
+
+
+
 
 
 
