@@ -4,3 +4,17 @@
 <IfModule !authz_core_module>
     Deny from all
 </IfModule>
+
+# MIME TYPES
+<IfModule mod_mime.c>
+    # JAVASCRIPT
+    AddType application/javascript js jsonp
+
+    # CSS
+    AddType text/css css
+
+    # IMAGES
+    AddType image/gif gif
+    AddType image/jpeg jpg jpeg
+    AddType image/png png
+</IfModule>
