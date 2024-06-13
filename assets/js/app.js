@@ -36,42 +36,51 @@ Vue.component("authors", {
 });
 
 Vue.component("edit-book", {
-    props: ["book"],
+    data() {
+        return {
+            book: [],
+        };
+    },
 	template: `
         <div id="edit-book">
         <headings title="Edit Book"></headings>
             <div id="edit-book-form" class="form-group">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" required>
+                    <input type="text" class="form-control" id="title" required :value="book.title">
                 </div>
                 <div class="mb-3">
                     <label for="author" class="form-label">Author</label>
-                    <input type="text" class="form-control" id="author" required>
+                    <input type="text" class="form-control" id="author" required :value="book.author">
                 </div>
                 <div class="mb-3">
                     <label for="genre" class="form-label">Genre</label>
-                    <input type="text" class="form-control" id="genre" required>
+                    <input type="text" class="form-control" id="genre" required :value="book.genre">
                 </div>
                 <div class="mb-3">
                     <label for="published_year" class="form-label">Published Year</label>
-                    <input type="text" class="form-control" id="published_year" required>
+                    <input type="text" class="form-control" id="published_year" required :value="book.published_year">
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" rows="3"></textarea>
+                    <textarea class="form-control" id="description" rows="3"></textarea :value="book.description">
                 </div>
-                <button type="submit" class="btn btn-primary" @click.prevent="editBook">Submit</button>
+                 <div class="d-flex justify-content-start gap-3 align-items-center mb-3">
+                    <button type="submit" class="btn btn-success btn-sm" @click.prevent="editBook">Submit</button>
+                    <button type="submit" class="btn btn-warning btn-sm" @click.prevent="clearForm">Clear</button>
+                    <a href="/grimoire/library" class="btn btn-danger btn-sm">Cancel</a>
+                </div>
                 <div id="error-message" class="text-danger mt-3 text-small" ></div>
             </div>
         </div>
     `,
 	methods: {
-        getBook(id) {
+        getBook() {
+            const id = location.pathname.split("/").pop();
             fetch(BASEURL + "books/" + id)
                 .then((res) => res.json())
                 .then((data) => {
-                    console.log(data);
+                    this.book = data;
                 })
                 .catch((error) => {
                     console.log(error);
@@ -111,6 +120,10 @@ Vue.component("edit-book", {
 			fields.forEach((field) => (field.value = ""));
 		},
 	},
+
+    mounted() {
+        this.getBook();
+    },
 });
 
 Vue.component("add-book", {
@@ -138,7 +151,11 @@ Vue.component("add-book", {
                     <label for="description" class="form-label">Description</label>
                     <textarea class="form-control" id="description" rows="3"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" @click.prevent="addBook">Submit</button>
+                <div class="d-flex justify-content-start gap-3 align-items-center mb-3">
+                    <button type="submit" class="btn btn-success btn-sm" @click.prevent="addBook">Submit</button>
+                    <button type="submit" class="btn btn-warning btn-sm" @click.prevent="clearForm">Clear</button>
+                    <a href="/grimoire/library" class="btn btn-danger btn-sm">Cancel</a>
+                </div>
                 <div id="error-message" class="text-danger mt-3 text-small" ></div>
             </div>
         </div>
@@ -162,8 +179,10 @@ Vue.component("add-book", {
 				.then(({ status, message }) => {
 					if (status === "success") {
 						this.$emit("book-added");
-						this.$emit("toggle");
+						// this.$emit("toggle");
 						this.clearForm();
+                        document.getElementById("error-message").innerHTML = "";
+                        window.location.href = "/grimoire/library";
 					} else {
 						document.getElementById("error-message").innerHTML = message;
 					}
@@ -193,11 +212,12 @@ Vue.component("library", {
         <div>
             <headings title="Library"></headings>
             <div id="library-content">
-                <button  type="button" class="btn btn-primary mb-3" @click.prevent="displayAddForm">Add</button>
+                <a class="btn btn-primary mb-3" href="/grimoire/library/add-book">Add</a>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead class="thead-dark text-center align-middle">
                             <tr>
+                                <th>ID</th>
                                 <th>Title</th>
                                 <th>Author</th>
                                 <th>Genre</th>
@@ -208,20 +228,19 @@ Vue.component("library", {
                         </thead>
                         <tbody>
                             <tr v-for="book in books">
+                                <td>{{ book.id }}</td>
                                 <td>{{ book.title }}</td>
                                 <td>{{ book.author }}</td>
                                 <td>{{ book.genre }}</td>
                                 <td>{{ book.published_year }}</td>
                                 <td>{{ book.description }}</td>
-                                <td><a href="#" class="btn btn-primary" @click.prevent="displayEditForm(book.id)">Edit</a></td>
-                                <td><a class="btn btn-danger" @click.prevent="deleteBook(book.id)">Delete</a></td>
+                                <td><a :href="'/grimoire/library/edit-book/' + book.id" class="btn btn-primary" >Edit</a></td>
+                                <td><a class="btn btn-danger" @click.prevent="deleteBook(book.id)" >Delete</a></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <add-book @book-added="fetchBooks" @toggle="displayAddForm" class="d-none" id="add-book-form"></add-book>
-            <edit-book @book-edited="fetchBooks" @toggle="displayEditForm" class="d-none" id="edit-book-form"></edit-book>
         </div>
     `,
 	methods: {
@@ -271,36 +290,29 @@ Vue.component("library", {
 new Vue({
 	el: "#app",
 	data: {
-		currentComponent: "dashboard",
 		currentProps: {},
 		menuItems: [
 			{
 				label: "Dashboard",
-				href: "/",
+				href: "/grimoire/", 
 				icon: "bi bi-house",
 				component: "dashboard",
 				props: {},
 			},
 			{
 				label: "Authors",
-				href: "/authors",
+				href: "/grimoire/authors",
 				icon: "bi bi-person",
 				component: "authors",
 				props: {},
 			},
 			{
 				label: "Library",
-				href: "/books",
+				href: "/grimoire/library",
 				icon: "bi bi-book",
 				component: "library",
 				props: {},
 			},
 		],
-	},
-	methods: {
-		navigate(component, props) {
-			this.currentComponent = component;
-			this.currentProps = props;
-		},
 	},
 });

@@ -53,7 +53,13 @@ $route['default_controller'] = 'Home';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
+//web route
+$route['authors']= 'Authors';
+$route['library']= 'Library';
+$route['library/add-book']= 'Library/addBook';
+$route['library/edit-book/(:num)']= 'Library/editBook/$1';
 
+//api route
 $route['books']['GET']= 'Books/index';
 $route['books/(:num)']['GET']= 'Books/get_book/$1';
 $route['books']['Post']= 'Books/create_book';
