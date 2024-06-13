@@ -28,7 +28,7 @@
                     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                         <ul class="navbar-nav">
                             <li v-for="item in menuItems" class="nav-item">
-                                <a class="nav-link text-light" :href="item.href" @click.prevent="navigate(item.component)"><i :class="item.icon" style="margin-right: 0.5rem;"></i>{{ item.label }}</a>
+                                <a class="nav-link text-light" :href="item.href" @click.prevent="navigate(item.component, item.props)"><i :class="item.icon" style="margin-right: 0.5rem;"></i>{{ item.label }}</a>
                             </li>
                         </ul>
                     </div>
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="container main p-3">
-            <component :is="currentComponent"></component>
+            <component :is="currentComponent" v-bind="currentProps" class="container p-3 m-3"></component>
         </div>
     </div>
     <script type="text/javascript" src="<?php echo base_url("assets/js/app.js"); ?>"></script>
