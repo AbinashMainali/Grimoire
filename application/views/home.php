@@ -9,8 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url("css/app.css"); ?>">
-    
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url("assets/css/app.css"); ?>">
     <title>Grimoire</title>
 </head>
 
@@ -19,7 +18,7 @@
         <div class="header">
             <div class="navbar navbar-expand-lg bg-dark">
                 <div class="container-fluid p-2 d-flex align-items-center">
-                    <a class="navbar-brandS text-light" style="font-family: 'Uncial Antiqua', cursive;" href="/">
+                    <a class="navbar-brand text-light" style="font-family: 'Uncial Antiqua', cursive;">
                         <i class="bi bi-bookmark-fill"></i>
                         Grimoire
                     </a>
@@ -40,6 +39,6 @@
             <component :is="currentComponent"></component>
         </div>
     </div>
+    <script type="text/javascript" src="<?php echo base_url("assets/js/app.js"); ?>"></script>
 </body>
-
 </html>

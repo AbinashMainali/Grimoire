@@ -25,13 +25,16 @@
 PHP version 8.2.4 used.
 
 # Run Server
-- php -S localhost:8000 index.php
+- I am running server through XAMPP Apache server for that I have positioned my project directory inside the xampp/htdocs folder. 
+Hence my server run in
+localhost/grimoire
 
 # Note:
  Since I am using PHP Version 8.2 and codeIgniter 3 was developed before that, I had so system/core and system/database file changes to avoid error such as
-# Message: Creation of dynamic property CI_Loader::$hooks is deprecated
+# Message: 
+Creation of dynamic property CI_Loader::$hooks is deprecated
 
-PHP 8.2 introduces a new attribute in the global namespace named             #[AllowDynamicProperties]. Classes declared with this attribute signals PHP to not emit any deprecation notices when setting dynamic properties on objects of that class.
+PHP 8.2 introduces a new attribute in the global namespace named #[AllowDynamicProperties]. Classes declared with this attribute signals PHP to not emit any deprecation notices when setting dynamic properties on objects of that class.
 
 Well this solved my error issue. 
 
