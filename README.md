@@ -12,9 +12,13 @@
 
 # Frontend: Vue 2
 
-Use direct CDN script on index.html
+-Use direct VUE CDN script
 
 "https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"
+
+-Bootstrap 
+"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 
 # Backend: CodeIgniter
 
