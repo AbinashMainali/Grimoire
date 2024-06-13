@@ -102,8 +102,6 @@ Vue.component("edit-book", {
                 .then((res) => res.json())
                 .then(({ status, message }) => {
                     if (status === "success") {
-                        this.$emit("book-edited");
-                        this.$emit("toggle");
                         this.clearForm();
                     } else {
                         document.getElementById("error-message").innerHTML = message;
@@ -154,7 +152,7 @@ Vue.component("add-book", {
                 <div class="d-flex justify-content-start gap-3 align-items-center mb-3">
                     <button type="submit" class="btn btn-success btn-sm" @click.prevent="addBook">Submit</button>
                     <button type="submit" class="btn btn-warning btn-sm" @click.prevent="clearForm">Clear</button>
-                    <a href="/grimoire/library" class="btn btn-danger btn-sm">Cancel</a>
+                    <button type="button" class="btn btn-danger btn-sm" @click="goBack">Cancel</button>
                 </div>
                 <div id="error-message" class="text-danger mt-3 text-small" ></div>
             </div>
@@ -178,11 +176,9 @@ Vue.component("add-book", {
 				.then((res) => res.json())
 				.then(({ status, message }) => {
 					if (status === "success") {
-						this.$emit("book-added");
-						// this.$emit("toggle");
 						this.clearForm();
                         document.getElementById("error-message").innerHTML = "";
-                        window.location.href = "/grimoire/library";
+                        this.goBack();
 					} else {
 						document.getElementById("error-message").innerHTML = message;
 					}
@@ -191,13 +187,15 @@ Vue.component("add-book", {
 					console.log(error);
 				});
 		},
-
 		clearForm() {
 			const fields = document.querySelectorAll(
 				"#add-book-form input, #add-book-form textarea"
 			);
 			fields.forEach((field) => (field.value = ""));
 		},
+        goBack() {
+            window.history.back();
+        }
 	},
 });
 
@@ -212,7 +210,7 @@ Vue.component("library", {
         <div>
             <headings title="Library"></headings>
             <div id="library-content">
-                <a class="btn btn-primary mb-3" href="/grimoire/library/add-book">Add</a>
+                <button class="btn btn-primary mb-3 btn-sm" href="/grimoire/library/add-book"><i class="bi bi-plus-lg"></i> Add</button>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead class="thead-dark text-center align-middle">
@@ -234,8 +232,8 @@ Vue.component("library", {
                                 <td>{{ book.genre }}</td>
                                 <td>{{ book.published_year }}</td>
                                 <td>{{ book.description }}</td>
-                                <td><a :href="'/grimoire/library/edit-book/' + book.id" class="btn btn-primary" >Edit</a></td>
-                                <td><a class="btn btn-danger" @click.prevent="deleteBook(book.id)" >Delete</a></td>
+                                <td><a :href="'/grimoire/library/edit-book/' + book.id" class="btn btn-primary btn-sm" ><i class="bi bi-pencil"></i></a></td>
+                                <td><a class="btn btn-danger btn-sm" @click.prevent="deleteBook(book.id)"><i class="bi bi-trash"></i></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -267,20 +265,6 @@ Vue.component("library", {
 					console.log(error);
 				});
 		},
-		displayAddForm() {
-			document.getElementById("add-book-form").classList.toggle("d-none");
-			document.getElementById("add-book-form").classList.toggle("d-block");
-
-			document.getElementById("library-content").classList.toggle("d-none");
-			document.getElementById("library-content").classList.toggle("d-block");
-		},
-        displayEditForm(id) {
-            this.$emit("getBook", id);
-            document.getElementById("edit-book-form").classList.toggle("d-none");
-            document.getElementById("edit-book-form").classList.toggle("d-block");
-            document.getElementById("library-content").classList.toggle("d-none");
-            document.getElementById("library-content").classList.toggle("d-block");
-        },
 	},
 	mounted() {
 		this.fetchBooks();
