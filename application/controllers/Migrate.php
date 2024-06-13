@@ -10,6 +10,7 @@ class Migrate extends CI_Controller {
         $this->load->library('migration');
     }
 
+    // Handle current migration
     public function index()
     {
         // Handle running migrations here
@@ -23,6 +24,7 @@ class Migrate extends CI_Controller {
         }
     }
 
+    // Handle migrating to a specific version
     public function version($version)
     {
         // Handle migrating to a specific version
@@ -36,6 +38,7 @@ class Migrate extends CI_Controller {
         }
     }
 
+    // Handle migrating to the latest version
     public function latest()
     {
         // Handle migrating to the latest version
