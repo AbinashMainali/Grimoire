@@ -29,7 +29,10 @@ const validateForm = (formId) => {
 	const inputs = form.querySelectorAll("input, textarea");
 	let isValid = true;
 	inputs.forEach((input, index) => {
-		if (index === 4 && input.value === "") return;
+		if (index === 5 && input.value === ""){
+			return;
+		}
+		if(index === 5 && input.value.length < 100) isValid = false;
 		if (input.value === "") isValid = false;
 	});
 	return isValid;
@@ -133,9 +136,13 @@ Vue.component("edit-book", {
                     <input type="text" class="form-control" id="title" required :value="book.title">
                 </div>
                 <div class="mb-3">
-                    <label for="author" class="form-label">Author</label>
-                    <input type="text" class="form-control" id="author" required :value="book.author">
+                    <label for="first_name" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="first_name" required :value="book.author && book.author.split(' ')[0]">
                 </div>
+				<div class="mb-3">
+					<label for="last_name" class="form-label">Last Name</label>
+					<input type="text" class="form-control" id="last_name" required :value="book.author && book.author.split(' ')[1]">
+				</div>
                 <div class="mb-3">
                     <label for="genre" class="form-label">Genre</label>
                     <input type="text" class="form-control" id="genre" required :value="book.genre">
@@ -146,7 +153,7 @@ Vue.component("edit-book", {
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" rows="3" :value="book.description"></textarea>
+                    <textarea class="form-control" id="description" rows="3" :value="book.description" minlength="100" placeholder="Description must be at least 100 characters long or Empty."></textarea>
                 </div>
                  <div class="d-flex justify-content-start gap-3 align-items-center mb-3">
                     <button type="submit" class="btn btn-success btn-sm" @click.prevent="editBook">Submit</button>
@@ -198,7 +205,7 @@ Vue.component("edit-book", {
 						this.clearForm();
 						this.goBack();
 					} else {
-						document.getElementById("error-message").innerHTML = message;
+						document.getElementById("error-message").innerHTML = Object.values(message)[0];
 					}
 				})
 				.catch((error) => {
@@ -232,9 +239,13 @@ Vue.component("add-book", {
                     <input type="text" class="form-control" id="title" required>
                 </div>
                 <div class="mb-3">
-                    <label for="author" class="form-label">Author</label>
-                    <input type="text" class="form-control" id="author" required>
+                    <label for="first_name" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="first_name" required>
                 </div>
+				<div class="mb-3">
+					<label for="last_name" class="form-label">Last Name</label>
+					<input type="text" class="form-control" id="last_name" required>
+				</div>
                 <div class="mb-3">
                     <label for="genre" class="form-label">Genre</label>
                     <input type="text" class="form-control" id="genre" required>
@@ -245,7 +256,7 @@ Vue.component("add-book", {
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" rows="3"></textarea>
+                    <textarea class="form-control" id="description" rows="3" minlength="100" placeholder="Description must be at least 100 characters long or Empty."></textarea>
                 </div>
                 <div class="d-flex justify-content-start gap-3 align-items-center mb-3">
                     <button type="submit" class="btn btn-success btn-sm" @click.prevent="addBook">Submit</button>
@@ -276,7 +287,7 @@ Vue.component("add-book", {
 						document.getElementById("error-message").innerHTML = "";
 						this.goBack();
 					} else {
-						document.getElementById("error-message").innerHTML = message;
+						document.getElementById("error-message").innerHTML = Object.values(message)[0];
 					}
 				})
 				.catch((error) => {
