@@ -11,3 +11,24 @@
 .navbar-brand {
     font-size: 1.5rem;
 }
+
+#welcome-card {
+    background: url('../images/cover.jpg') ;
+    -webkit-background-size: cover;
+}
+
+.img {
+    width: 100%;
+    height: 30vh;
+    object-fit: contain;
+    background-color: none;
+}
+
+@media (min-width: 768px) {
+    .img {
+        width: 100%;
+        height: 20vw;
+        object-fit: contain;
+        background-color: none;
+    }
+}

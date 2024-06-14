@@ -4,10 +4,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Books_Model extends CI_Model
 {
+
     public function __construct()
     {
         parent::__construct();
-
         $this->load->database();
     }
 
@@ -65,7 +65,7 @@ class Books_Model extends CI_Model
     }
 
     /**
-     * Delete book
+     * Soft Delete book
      * 
      * @param int $id
      * @return int
@@ -74,7 +74,13 @@ class Books_Model extends CI_Model
     public function delete_book($id)
     {
         $this->db->where('id', $id);
-        $this->db->delete('books');
+        $this->db->update('books', array('deleted_at' => date('Y-m-d H:i:s')));
         return $this->db->affected_rows();
+    }
+
+    public function getAuthors()
+    {
+        $query = $this->db->select('author')->distinct()->get('books');
+        return $query->result();
     }
 }
