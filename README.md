@@ -2,6 +2,12 @@
  Grimoire is a simple book library app wrapped with mystical and magical web theme developed using VUE 2 for Frontend and CodeIgniter for Backend.
  This is on page vue app which means vue is integrated only on certain features/pages. 
 
+	
+
+https://github.com/AbinashMainali/Grimoire/assets/27627798/5324c00a-2a18-4ff8-9fc0-58be8a06994e
+
+
+
 # Technologies
 -Backend: Code Igniter 3.1.13 (PHP)
 -Frontend: Vue 2 (Javascript)
