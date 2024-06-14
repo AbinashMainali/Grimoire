@@ -19,7 +19,7 @@ class Books extends CI_Controller
     }
 
     /**
-     * Get all books
+     * Get books where deleted_at is null
      * 
      * @return array
      * 
@@ -114,10 +114,4 @@ class Books extends CI_Controller
         $deleted = $this->Books_Model->delete_book($id);
         echo json_encode(array('status' => 'success', 'data' => $deleted));
     }
-
-    // public function get_authors()
-    // {
-    //     $authors = $this->Books_Model->get_authors();
-    //     echo json_encode($authors);
-    // }
 }
