@@ -2,19 +2,55 @@ Vue.config.devtools = true;
 Vue.config.productionTip = false;
 const BASEURL = "http://localhost/grimoire/";
 
+/**
+ * Retrieves the data from a form with the specified ID.
+ *
+ * @param {string} formId - The ID of the form to retrieve data from.
+ * @return {Object} An object containing the data from the form inputs, where the keys are the input IDs and the values are the input values.
+ */
+const getFormData = (formId) => {
+	const form = document.getElementById(formId);
+	const inputs = form.querySelectorAll("input, textarea");
+	const data = {};
+	inputs.forEach((input) => {
+		data[input.id] = input.value;
+	});
+	return data;
+};
+
+/**
+ * Validates a form by checking if all input fields have a value, except for the fifth input field i.e discription.
+ *
+ * @param {string} formId - The ID of the form to validate.
+ * @return {boolean} Returns true if all input fields have a value, except for the fifth input field. Otherwise, returns false.
+ */
+const validateForm = (formId) => {
+	const form = document.getElementById(formId);
+	const inputs = form.querySelectorAll("input, textarea");
+	let isValid = true;
+	inputs.forEach((input, index) => {
+		if (index === 4 && input.value === "") return;
+		if (input.value === "") isValid = false;
+	});
+	return isValid;
+};
+
+// Heading Component
 Vue.component("headings", {
 	props: ["title"],
 	template: `
         <div>
             <h1 class="text-emphasis">{{ title }}</h1>
+            <hr>
         </div>
     `,
 });
 
+// Dashboard Component
 Vue.component("dashboard", {
 	data() {
 		return {
-			// Adding Demo data in dashboard to make it look nicer.
+			// Adding dummy data in dashboard to make it look nicer.
 			books: [
 				{
 					id: 1,
@@ -81,6 +117,7 @@ Vue.component("dashboard", {
     `,
 });
 
+// Edit Book Component
 Vue.component("edit-book", {
 	data() {
 		return {
@@ -105,7 +142,7 @@ Vue.component("edit-book", {
                 </div>
                 <div class="mb-3">
                     <label for="published_year" class="form-label">Published Year</label>
-                    <input type="text" class="form-control" id="published_year" required :value="book.published_year">
+                    <input type="number" class="form-control" id="published_year" required :value="book.published_year">
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
@@ -121,6 +158,11 @@ Vue.component("edit-book", {
         </div>
     `,
 	methods: {
+		/**
+		 * Retrieves a book from the server based on the book's ID in the current URL path.
+		 *
+		 * @return {Promise<void>} - A promise that resolves when the book data is successfully fetched and stored in the component's state.
+		 */
 		getBook() {
 			const id = location.pathname.split("/").pop();
 			fetch(BASEURL + "books/" + id)
@@ -132,18 +174,23 @@ Vue.component("edit-book", {
 					console.log(error);
 				});
 		},
+		/**
+		 * Edits a book by sending a PUT request to the server with the updated book data.
+		 *
+		 * @return {Promise<void>} - A promise that resolves when the book is successfully edited and the form is cleared.
+		 *                          If the form validation fails, an error message is displayed.
+		 */
 		editBook() {
-			const book = {
-				title: document.getElementById("title").value,
-				author: document.getElementById("author").value,
-				genre: document.getElementById("genre").value,
-				published_year: document.getElementById("published_year").value,
-				description: document.getElementById("description").value,
-			};
+			const bookData = getFormData("edit-book-form");
+			if (!validateForm("edit-book-form")) {
+				document.getElementById("error-message").innerHTML =
+					"Please fill in all fields with valid data!";
+				return;
+			}
 			fetch(BASEURL + "books/" + this.book.id, {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(book),
+				body: JSON.stringify(bookData),
 			})
 				.then((res) => res.json())
 				.then(({ status, message }) => {
@@ -159,10 +206,10 @@ Vue.component("edit-book", {
 				});
 		},
 		clearForm() {
-			const fields = document.querySelectorAll(
-				"#edit-book-form input, #edit-book-form textarea"
-			);
-			fields.forEach((field) => (field.value = ""));
+			const form = document.getElementById("edit-book-form");
+			const inputs = form.querySelectorAll("input, textarea");
+			inputs.forEach((input) => (input.value = ""));
+			document.getElementById("error-message").innerHTML = "";
 		},
 
 		goBack() {
@@ -194,7 +241,7 @@ Vue.component("add-book", {
                 </div>
                 <div class="mb-3">
                     <label for="published_year" class="form-label">Published Year</label>
-                    <input type="text" class="form-control" id="published_year" required>
+                    <input type="number" class="form-control" id="published_year" required>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
@@ -211,18 +258,16 @@ Vue.component("add-book", {
     `,
 	methods: {
 		addBook() {
-			const book = {
-				title: document.getElementById("title").value,
-				author: document.getElementById("author").value,
-				genre: document.getElementById("genre").value,
-				published_year: document.getElementById("published_year").value,
-				description: document.getElementById("description").value,
-			};
-
+			const bookData = getFormData("add-book-form");
+			if (!validateForm("add-book-form")) {
+				document.getElementById("error-message").innerHTML =
+					"Please fill in all fields with valid data!";
+				return;
+			}
 			fetch(BASEURL + "books", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(book),
+				body: JSON.stringify(bookData),
 			})
 				.then((res) => res.json())
 				.then(({ status, message }) => {
@@ -239,38 +284,39 @@ Vue.component("add-book", {
 				});
 		},
 		clearForm() {
-			const fields = document.querySelectorAll(
-				"#add-book-form input, #add-book-form textarea"
-			);
-			fields.forEach((field) => (field.value = ""));
+			const form = document.getElementById("add-book-form");
+			const inputs = form.querySelectorAll("input, textarea");
+			inputs.forEach((input) => (input.value = ""));
+			document.getElementById("error-message").innerHTML = "";
 		},
+
 		goBack() {
 			window.history.back();
 		},
 	},
 });
 
+// Library Component
 Vue.component("library", {
 	props: [],
 	data() {
 		return {
 			books: [],
-			showArchived: false,
+			showArchived: true,
 		};
 	},
 	template: `
         <div>
             <headings title="Library"></headings>
             <div id="library-content">
-                <div class="mb-3">
+                <div class="m-3">
                     <a class="btn btn-primary btn-sm" href="/grimoire/library/add-book"><i class="bi bi-plus-lg"></i> Add</a>
                     <button type="button" class="btn btn-danger btn-sm" @click="toggleArchive" style="float: right;"><i class="bi bi-book"></i> Show Archived</button>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive mt-3">
                     <table class="table table-striped table-hover">
-                        <thead class="thead-dark text-center align-middle">
+                        <thead class="thead text-center align-middle">
                             <tr>
-                                <th>ID</th>
                                 <th>Title</th>
                                 <th>Author</th>
                                 <th>Genre</th>
@@ -279,16 +325,17 @@ Vue.component("library", {
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="text-center">
                             <tr v-for="book in books.filter(book => !showArchived || !book.deleted_at)" :key="book.id" :class="book.deleted_at ? 'table-danger' : ''">
-                                <td>{{ book.id }}</td>
                                 <td>{{ book.title }}</td>
                                 <td>{{ book.author }}</td>
                                 <td>{{ book.genre }}</td>
                                 <td>{{ book.published_year }}</td>
                                 <td>{{ book.description }}</td>
-                                <td><a :href="'/grimoire/library/edit-book/' + book.id" class="btn btn-primary btn-sm" ><i class="bi bi-pencil"></i></a></td>
-                                <td><a class="btn btn-danger btn-sm" @click.prevent="deleteBook(book.id)"><i class="bi bi-trash"></i></a></td>
+                                <td>
+                                    <a :href="'/grimoire/library/edit-book/' + book.id" :class="book.deleted_at ? 'd-none' : ''" class="btn btn-primary btn-sm " ><i class="bi bi-pencil"></i></a>
+                                    <a class="btn btn-danger btn-sm mx-1 my-1" :class="book.deleted_at ? 'd-none' : ''" @click.prevent="deleteBook(book.id)"><i class="bi bi-trash"></i></a>
+                                </td>
                             </tr>
                             <tr v-if="books.length === 0">
                                 <td colspan="7" class="text-center">No books found</td>
@@ -300,6 +347,12 @@ Vue.component("library", {
         </div>
     `,
 	methods: {
+		/**
+		 * Deletes a book with the specified ID from the server.
+		 *
+		 * @param {number} id - The ID of the book to delete.
+		 * @return {Promise<void>} A promise that resolves when the book is successfully deleted.
+		 */
 		deleteBook(id) {
 			fetch(BASEURL + "books/" + id, {
 				method: "DELETE",
@@ -313,6 +366,11 @@ Vue.component("library", {
 					console.log(error);
 				});
 		},
+		/**
+		 * Fetches books from the server.
+		 *
+		 * @return {Promise<void>} A promise that resolves when the books are successfully fetched.
+		 */
 		fetchBooks() {
 			fetch(BASEURL + "books")
 				.then((response) => response.json())
@@ -332,6 +390,7 @@ Vue.component("library", {
 	},
 });
 
+// Vue Instance Initialization
 new Vue({
 	el: "#app",
 	data: {
